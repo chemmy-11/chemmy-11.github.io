@@ -1,0 +1,79 @@
+---
+import type { Locale } from '../data/site';
+import { site } from '../data/site';
+import { copy } from '../i18n/ui';
+import SiteHeader from '../components/SiteHeader.astro';
+import '../styles/global.css';
+
+interface Props {
+  locale: Locale;
+  title: string;
+  description: string;
+  paths: Record<Locale, string>;
+}
+
+const { locale, title, description, paths } = Astro.props;
+const other: Locale = locale === 'zh' ? 'en' : 'zh';
+const c = copy[locale];
+const origin = Astro.site ?? new URL(`https://${site.domain}/`);
+const canonical = new URL(paths[locale], origin).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: site.name,
+  url: canonical,
+  email: site.email,
+  sameAs: [site.github],
+  knowsAbout: ['AI Infrastructure', 'FPGA', 'High-speed interconnect', 'Agent runtime observability'],
+};
+---
+
+<!doctype html>
+<html lang={locale === 'zh' ? 'zh-CN' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="zh-CN" href={new URL(paths.zh, origin).href} />
+    <link rel="alternate" hreflang="en" href={new URL(paths.en, origin).href} />
+    <link rel="alternate" hreflang="x-default" href={new URL(paths.zh, origin).href} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f0f10" media="(prefers-color-scheme: dark)" />
+    <meta property="og:type" content="profile" />
+    <meta property="og:site_name" content={`${site.name} · ${site.domain}`} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={locale === 'zh' ? 'zh_CN' : 'en_US'} />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <script is:inline>
+      (function () {
+        try {
+          var saved = localStorage.getItem('theme');
+          if (saved === 'dark' || saved === 'light') {
+            document.documentElement.setAttribute('data-theme', saved);
+          }
+        } catch (err) {}
+      })();
+    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{c.skip_link}</a>
+    <SiteHeader locale={locale} otherHref={paths[other]} homeHref={paths[locale]} />
+    <main id="main" class="wrap">
+      <slot />
+    </main>
+    <footer class="site-foot">
+      <div class="wrap">
+        <p>{c.footer_note}</p>
+      </div>
+    </footer>
+  </body>
+</html>

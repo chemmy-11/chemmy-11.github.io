@@ -1,0 +1,19 @@
+---
+import { copy } from '../i18n/ui';
+import Base from '../layouts/Base.astro';
+
+const c = copy.zh;
+---
+
+<Base locale="zh" title={c.notfound_title} description={c.notfound_body} paths={{ zh: '/', en: '/en' }}>
+  <section class="hero">
+    <p class="kicker">404 — NOT FOUND</p>
+    <h1>{c.notfound_title}</h1>
+    <p class="hero-sub">{c.notfound_body}</p>
+    <p class="row-role">
+      <a href="/">{c.notfound_back}</a>
+      <span> · </span>
+      <a href="/en">English</a>
+    </p>
+  </section>
+</Base>

@@ -1,0 +1,81 @@
+---
+import type { Locale } from '../data/site';
+import { copy } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  otherHref: string;
+  homeHref: string;
+}
+
+const { locale, otherHref, homeHref } = Astro.props;
+const c = copy[locale];
+const root = locale === 'zh' ? '/' : '/en';
+---
+
+<header class="site-head">
+  <div class="wrap site-head-inner">
+    <a class="brand" href={homeHref}>{'chemmy · linslive.com'}</a>
+    <nav class="head-nav" aria-label={c.work.title}>
+      <a class="head-link" href={`${root}#work`}>{c.nav.work}</a>
+      <a class="head-link" href={`${root}#toolkit`}>{c.nav.toolkit}</a>
+      <a class="head-link" href={`${root}#contact`}>{c.nav.contact}</a>
+    </nav>
+    <div class="head-tools">
+      <a class="tool-btn" href={otherHref} hreflang={locale === 'zh' ? 'en' : 'zh-CN'}>
+        {c.lang_other}
+      </a>
+      <button
+        class="tool-btn"
+        id="theme-toggle"
+        type="button"
+        aria-live="polite"
+        data-label={c.theme_label}
+        data-system={c.theme_system}
+        data-light={c.theme_light}
+        data-dark={c.theme_dark}
+      >
+        {c.theme_label}
+      </button>
+    </div>
+  </div>
+</header>
+
+<script>
+  const button = document.getElementById('theme-toggle');
+
+  if (button instanceof HTMLButtonElement) {
+    const modes = ['system', 'light', 'dark'] as const;
+    type Mode = (typeof modes)[number];
+
+    const labels: Record<Mode, string> = {
+      system: button.dataset.system ?? 'System',
+      light: button.dataset.light ?? 'Light',
+      dark: button.dataset.dark ?? 'Dark',
+    };
+    const prefix = button.dataset.label ?? 'Theme';
+
+    const read = (): Mode => {
+      const attr = document.documentElement.getAttribute('data-theme');
+      return attr === 'light' || attr === 'dark' ? attr : 'system';
+    };
+
+    const paint = (mode: Mode) => {
+      button.textContent = `${prefix} · ${labels[mode]}`;
+    };
+
+    button.addEventListener('click', () => {
+      const next: Mode = modes[(modes.indexOf(read()) + 1) % modes.length];
+      if (next === 'system') {
+        document.documentElement.removeAttribute('data-theme');
+        localStorage.removeItem('theme');
+      } else {
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+      }
+      paint(next);
+    });
+
+    paint(read());
+  }
+</script>

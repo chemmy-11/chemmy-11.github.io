@@ -1,0 +1,97 @@
+---
+import type { Locale } from '../data/site';
+import { site } from '../data/site';
+import { projects, toolkit, pick } from '../data/projects';
+import { copy } from '../i18n/ui';
+import Base from '../layouts/Base.astro';
+import ProjectRow from './ProjectRow.astro';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const c = copy[locale];
+const paths: Record<Locale, string> = { zh: '/', en: '/en' };
+
+const contacts = [
+  { k: c.labels.mail, v: site.email, href: `mailto:${site.email}` },
+  { k: c.labels.repo, v: `${site.githubHandle} · GitHub`, href: site.github },
+  { k: c.labels.site, v: site.domain, href: `https://${site.domain}/` },
+  ...(site.resumeHref
+    ? [{ k: c.labels.resume, v: 'PDF', href: site.resumeHref }]
+    : []),
+];
+---
+
+<Base locale={locale} title={c.meta_title} description={c.meta_desc} paths={paths}>
+  <section class="hero">
+    <p class="hero-prompt">{c.hero_prompt}</p>
+    <h1>
+      {c.hero_line1}
+      <br />
+      {c.hero_line2}
+    </h1>
+    <p class="hero-sub">{c.hero_sub}</p>
+    <dl class="facts">
+      {c.facts.map((fact) => (
+        <div class="fact">
+          <dt>{fact.k}</dt>
+          <dd>{fact.v}</dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+
+  <hr class="rule" />
+
+  <section id="profile" class="about">
+    <div class="section-head">
+      <p class="kicker">{c.about.kicker}</p>
+      <h2>{c.about.title}</h2>
+    </div>
+    <p class="about-body">{c.about.body}</p>
+  </section>
+
+  <section id="work">
+    <div class="section-head">
+      <p class="kicker">{c.work.kicker}</p>
+      <h2>{c.work.title}</h2>
+    </div>
+    {projects.map((project) => (<ProjectRow project={project} locale={locale} />))}
+  </section>
+
+  <section id="toolkit">
+    <div class="section-head">
+      <p class="kicker">{c.toolkit.kicker}</p>
+      <h2>{c.toolkit.title}</h2>
+    </div>
+    <div class="toolkit">
+      {toolkit.map((group) => (
+        <div class="toolkit-group">
+          <h3>{pick(group.group, locale)}</h3>
+          <ul class="toolkit-list">
+            {group.items.map((item) => (<li>{item}</li>))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section id="contact">
+    <div class="section-head">
+      <p class="kicker">{c.contact.kicker}</p>
+      <h2>{c.contact.title}</h2>
+    </div>
+    <dl class="contact-list">
+      {contacts.map((row) => (
+        <div class="spec-line">
+          <dt class="spec-k">{row.k}</dt>
+          <dd class="spec-v">
+            <a href={row.href}>{row.v}</a>
+          </dd>
+        </div>
+      ))}
+    </dl>
+  </section>
+</Base>

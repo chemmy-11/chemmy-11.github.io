@@ -1,0 +1,52 @@
+---
+import type { Locale } from '../data/site';
+import type { Project } from '../data/projects';
+import { pick } from '../data/projects';
+import { copy, statusLed } from '../i18n/ui';
+
+interface Props {
+  project: Project;
+  locale: Locale;
+}
+
+const { project, locale } = Astro.props;
+const c = copy[locale];
+const led = statusLed[project.status];
+---
+
+<article class="row" id={project.id}>
+  <p class="row-index">{project.index}</p>
+  <div>
+    <h3 class="row-title">
+      <a href={project.url} rel="noopener noreferrer" target="_self">{pick(project.title, locale)}</a>
+    </h3>
+    <p class="row-tagline">{pick(project.tagline, locale)}</p>
+    <p class="row-role">{c.labels.role} — {pick(project.role, locale)}</p>
+
+    <div class="spec">
+      <p class="status">
+        <span class={`led${led === 'warn' ? ' led--warn' : ''}`} aria-hidden="true"></span>
+        {c.labels.status} · {c.status[project.status]}
+        <span class="spec-k" style="margin-left:auto">{project.updated}</span>
+      </p>
+      <dl class="spec-kv">
+        {project.specs.map((spec) => (
+          <div class="spec-line">
+            <dt class="spec-k">{spec.k}</dt>
+            <dd class="spec-v">{pick(spec.v, locale)}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+
+    <div class="narrative">
+      <p class="narr" data-k={c.narrative.problem}>{pick(project.narrative.problem, locale)}</p>
+      <p class="narr" data-k={c.narrative.decision}>{pick(project.narrative.decision, locale)}</p>
+      <p class="narr" data-k={c.narrative.result}>{pick(project.narrative.result, locale)}</p>
+    </div>
+
+    <ul class="tags">
+      {project.tags.map((tag) => (<li class="tag">{tag}</li>))}
+    </ul>
+  </div>
+</article>

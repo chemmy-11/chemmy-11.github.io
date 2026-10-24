@@ -1,0 +1,559 @@
+/* ============================================================
+   linslive — Swiss editorial skeleton (B) + console details (A)
+   改这里就能换掉整站气质：字号、留白、颜色都在本文件顶部。
+   ============================================================ */
+
+:root {
+  color-scheme: light dark;
+
+  /* type */
+  --font-display: 'Helvetica Neue', 'Inter Tight', Inter, system-ui, 'PingFang SC',
+    'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  --font-text: system-ui, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei',
+    'Segoe UI', sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Mono', Consolas,
+    monospace;
+
+  --step-hero: clamp(2.4rem, 6.5vw, 4.4rem);
+  --step-title: clamp(1.5rem, 3.2vw, 2rem);
+  --step-body: 1rem;
+  --step-mono: 0.75rem;
+  --leading-body: 1.75;
+
+  /* rhythm */
+  --gap-section: clamp(3.5rem, 9vw, 7rem);
+  --wrap: 68rem;
+  --pad: clamp(1.25rem, 4vw, 2.5rem);
+
+  /* palette — light */
+  --bg: #ffffff;
+  --ink: #111112;
+  --muted: #6a6a6a;
+  --line: #e4e4e4;
+  --line-strong: #111112;
+  --accent: #e0342a;
+  --panel: #fafaf8;
+  --led-ok: #1f9d55;
+  --led-warn: #b7791f;
+}
+
+/* palette — dark (system preference) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #0f0f10;
+    --ink: #f2f2f2;
+    --muted: #9a9a9c;
+    --line: #26262a;
+    --line-strong: #f2f2f2;
+    --accent: #ff6a5e;
+    --panel: #141517;
+    --led-ok: #7ee787;
+    --led-warn: #e3b341;
+  }
+}
+
+/* palette — dark (manual override) */
+:root[data-theme='dark'] {
+  --bg: #0f0f10;
+  --ink: #f2f2f2;
+  --muted: #9a9a9c;
+  --line: #26262a;
+  --line-strong: #f2f2f2;
+  --accent: #ff6a5e;
+  --panel: #141517;
+  --led-ok: #7ee787;
+  --led-warn: #e3b341;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-text);
+  font-size: var(--step-body);
+  line-height: var(--leading-body);
+  text-rendering: optimizeLegibility;
+}
+
+/* ---------- structure ---------- */
+
+.wrap {
+  max-width: var(--wrap);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--ink);
+  color: var(--bg);
+  padding: 0.5rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+}
+
+.skip-link:focus {
+  left: var(--pad);
+  top: var(--pad);
+}
+
+section {
+  margin-block: var(--gap-section);
+}
+
+.rule {
+  border: 0;
+  border-top: 1px solid var(--line-strong);
+  margin: 0;
+}
+
+/* ---------- mono voice (来自 Console) ---------- */
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.kicker {
+  margin: 0 0 0.85rem;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* ---------- header ---------- */
+
+.site-head {
+  padding-block: 1.15rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.site-head-inner {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.5rem;
+}
+
+.brand {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.head-nav {
+  display: flex;
+  gap: 1.25rem;
+  margin-left: auto;
+}
+
+.head-link {
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.head-tools {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+}
+
+.tool-btn {
+  appearance: none;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 0.15rem 0;
+  color: var(--muted);
+  font: inherit;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.tool-btn:hover,
+.head-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* ---------- hero ---------- */
+
+.hero {
+  margin-top: clamp(2.5rem, 7vw, 5rem);
+}
+
+.hero-prompt {
+  margin: 0 0 1.5rem;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  color: var(--muted);
+}
+
+.hero-prompt::before {
+  content: '$ ';
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-hero);
+  font-weight: 500;
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+.hero-sub {
+  margin: 1.5rem 0 0;
+  max-width: 34rem;
+  font-size: 1.0625rem;
+  color: var(--muted);
+}
+
+.facts {
+  display: grid;
+  gap: 0;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1.25rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.fact:last-child {
+  border-bottom: 0;
+}
+
+.fact dt {
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: var(--step-mono);
+}
+
+.fact dd {
+  margin: 0;
+  color: var(--ink);
+}
+
+/* ---------- section head ---------- */
+
+.section-head {
+  margin-bottom: 2.25rem;
+}
+
+.section-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--step-title);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- profile ---------- */
+
+.about-body {
+  margin: 0;
+  max-width: 40rem;
+  font-size: 1.0625rem;
+}
+
+/* ---------- work rows ---------- */
+
+.row {
+  display: grid;
+  grid-template-columns: 3.5rem minmax(0, 1fr);
+  gap: 1.75rem;
+  padding-block: 2.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.row-index {
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  color: var(--muted);
+  padding-top: 0.45rem;
+}
+
+.row-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.4375rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.row-title a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+}
+
+.row-title a:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.row-tagline {
+  margin: 0.6rem 0 0;
+  max-width: 42rem;
+  color: var(--muted);
+}
+
+.row-role {
+  margin: 0.9rem 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* spec block: Console 的 key-value 表 */
+.spec {
+  margin-top: 1.5rem;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 0.35rem 0;
+}
+
+.spec-kv {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+}
+
+.spec-line {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 1rem;
+  padding: 0.4rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.spec-k {
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: var(--step-mono);
+}
+
+.spec-v {
+  margin: 0;
+  color: var(--ink);
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem 0.35rem;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.led {
+  width: 0.4375rem;
+  height: 0.4375rem;
+  border-radius: 50%;
+  background: var(--led-ok);
+  box-shadow: 0 0 0.4rem var(--led-ok);
+}
+
+.led--warn {
+  background: var(--led-warn);
+  box-shadow: 0 0 0.4rem var(--led-warn);
+}
+
+/* narrative: 问题 / 取舍 / 结果 */
+.narrative {
+  margin: 1.5rem 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0.9rem;
+  max-width: 44rem;
+}
+
+.narr {
+  margin: 0;
+  padding-left: 5.5rem;
+  position: relative;
+  color: var(--ink);
+}
+
+.narr::before {
+  content: attr(data-k);
+  position: absolute;
+  left: 0;
+  top: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1.5rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--line);
+  padding: 0.25rem 0.5rem;
+}
+
+/* ---------- toolkit ---------- */
+
+.toolkit {
+  display: grid;
+  gap: 1.75rem;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.toolkit-group h3 {
+  margin: 0 0 0.7rem;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.4rem;
+}
+
+.toolkit-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.9;
+}
+
+/* ---------- contact ---------- */
+
+.contact-list {
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+/* ---------- footer ---------- */
+
+.site-foot {
+  margin-top: var(--gap-section);
+  padding-block: 1.5rem 2.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.site-foot p {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--step-mono);
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+/* ---------- links & a11y ---------- */
+
+a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+a:hover {
+  color: var(--accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 40rem) {
+  .row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.9rem;
+  }
+
+  .fact,
+  .spec-line {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.15rem;
+  }
+
+  .narr {
+    padding-left: 0;
+  }
+
+  .narr::before {
+    position: static;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
